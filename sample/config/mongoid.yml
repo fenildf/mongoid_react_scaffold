@@ -1,0 +1,12 @@
+development:
+  sessions:
+    default:
+      database: mongoid_react_scaffold_dev
+      hosts:
+        - localhost:27017
+test:
+  sessions:
+    default:
+      database: mongoid_react_scaffold_test
+      hosts:
+        - localhost:27017
