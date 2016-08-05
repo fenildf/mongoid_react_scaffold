@@ -18,6 +18,11 @@ module MongoidReactScaffold
         template "former.rb", File.join("app/models/concerns/", class_path, "#{file_name}_former.rb")
       end
 
+      def add_to_data_former
+        sentinel = /DataFormerConfig\s*\n/m
+        inject_into_file 'app/models/data_former.rb', "  include #{class_name}Former\n", { after: sentinel, verbose: false, force: true } 
+      end
+
       #hook_for :test_framework
     end
   end

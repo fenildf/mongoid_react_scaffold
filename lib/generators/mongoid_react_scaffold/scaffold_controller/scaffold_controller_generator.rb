@@ -22,6 +22,11 @@ module MongoidReactScaffold
         template "controller.rb", File.join('app/controllers', controller_class_path, "#{controller_file_name}_controller.rb")
       end
 
+      def add_route
+        sentinel = /\.routes\.draw do\s*\n/m
+        inject_into_file 'config/routes.rb', "  resources :#{file_name.pluralize}\n", { after: sentinel, verbose: false, force: true }
+      end
+
       #hook_for :template_engine, :test_framework, as: :scaffold
 
       # Invoke the helper using the controller name (pluralized)
