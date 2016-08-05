@@ -1,28 +1,64 @@
 # MongoidReactScaffold
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/mongoid_react_scaffold`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Mindpin 自制 Scaffold
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'mongoid_react_scaffold'
+gem 'mongoid_react_scaffold', github: 'mindpin/mongoid_react_scaffold'
+
+# 以下为其余依赖项
+# for semantic
+gem 'semantic-ui-sass', '~> 2.2.2.2'
+
+# for react
+gem 'react-rails', '1.8.1'
+gem 'sprockets-coffee-react', '4.0.0'
+
+# 通过 rails assets 服务加载前端包
+source 'https://rails-assets.org'
+gem 'rails-assets-semantic'
+
+#http://medialize.github.io/URI.js/
+gem 'rails-assets-URIjs'
+# http://facebook.github.io/immutable-js/
+gem 'rails-assets-immutable'
+# https://github.com/Olical/EventEmitter/blob/master/docs/guide.md
+gem 'rails-assets-eventEmitter'
+# for react end
 ```
 
 And then execute:
 
     $ bundle
 
-Or install it yourself as:
+## 使用说明
 
-    $ gem install mongoid_react_scaffold
+初次运行：
+```shell
+rails g mongoid_react_scaffold:install
+```
 
-## Usage
+配置：
+```
+// app/assets/javascripts/application.js
+// 添加以下内容:
+//
+//= require mongoid_react_scaffold
+```
 
-TODO: Write usage instructions here
+```
+// app/assets/stylesheets/application.css
+//= require 'mongoid_react_scaffold'
+```
+
+```
+# app/controllers/application_controller.rb
+# 添加以下依赖
+  include MongoidReactScaffoldHelper
+```
 
 ## Development
 

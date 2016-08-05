@@ -17,6 +17,9 @@ module MongoidReactScaffold
       end
 
       def copy_assets
+        copy_file "mongoid_react_scaffold.scss", "app/assets/stylesheets/mongoid_react_scaffold.scss"
+        copy_file "mongoid_react_scaffold.coffee", "app/assets/javascripts/mongoid_react_scaffold.coffee"
+
         %w[class_name.coffee jquery-open-modal.coffee jquery_extension.coffee].each do |f|
           copy_file "utils/#{f}", "app/assets/javascripts/mongoid_react_scaffold/utils/#{f}"
         end
