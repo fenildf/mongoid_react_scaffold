@@ -12,9 +12,13 @@ module <%= class_name %>Former
       #  instance.method
       #}
 
-      #url :test_url, ->(instance) {
-      #  test_path(instance)
-      #}
+      url :update_url, ->(instance) {
+        <%= singular_table_name %>_path(instance)
+      }
+
+      url :delete_url, ->(instance) {
+        <%= singular_table_name %>_path(instance)
+      }
     end
   end
 end

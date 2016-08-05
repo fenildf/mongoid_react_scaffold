@@ -4,6 +4,8 @@ class <%= controller_class_name %>Controller < ApplicationController
     @page_name = "<%= plural_table_name %>"
     <%= plural_table_name %> = <%= human_name %>.all.map do |<%= singular_table_name %>|
       DataFormer.new(<%= singular_table_name %>)
+        .url(:update_url)
+        .url(:delete_url)
         .data
     end
 
@@ -12,14 +14,16 @@ class <%= controller_class_name %>Controller < ApplicationController
       create_url: <%= plural_table_name %>_path
     }
 
-    render "/mockup/page"
+    render "/react/page"
   end
 
   def create
-    <%= singular_table_name %> = <%= human_name %>.new "#{singular_table_name}_params"
+    <%= singular_table_name %> = <%= human_name %>.new <%= singular_table_name %>_params
 
     save_model(<%= singular_table_name %>, "<%= singular_table_name %>") do |_<%= singular_table_name %>|
       DataFormer.new(_<%= singular_table_name %>)
+        .url(:update_url)
+        .url(:delete_url)
         .data
     end
   end
@@ -29,6 +33,8 @@ class <%= controller_class_name %>Controller < ApplicationController
 
     update_model(<%= singular_table_name %>, <%= singular_table_name %>_params, "<%= singular_table_name %>") do |_<%= singular_table_name %>|
       DataFormer.new(_<%= singular_table_name %>)
+        .url(:update_url)
+        .url(:delete_url)
         .data
     end
   end
