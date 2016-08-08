@@ -33,6 +33,10 @@ module MongoidReactScaffold
       #hook_for :helper, as: :scaffold do |invoked|
         #invoke invoked, [ controller_name ]
       #end
+      protected
+      def react_prefix
+        "#{controller_class_path.join('_')}_" unless controller_class_path.blank?
+      end
     end
   end
 end
