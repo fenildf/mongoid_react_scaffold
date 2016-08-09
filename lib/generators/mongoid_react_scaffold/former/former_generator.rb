@@ -15,7 +15,7 @@ module MongoidReactScaffold
       class_option :collection, type: :string, desc: "The collection for storing model's documents"
 
       def create_former
-        template "former.rb", File.join("app/models/concerns/", class_path, "#{file_name}_former.rb")
+        template "former.rb", File.join("app/models/concerns/", (class_path + ["#{file_name}_former.rb"]).join('_'))
       end
 
       def add_to_data_former
