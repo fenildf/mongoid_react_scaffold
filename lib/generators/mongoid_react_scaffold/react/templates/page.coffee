@@ -1,4 +1,4 @@
-@<%= controller_class_name %>Page = React.createClass
+@<%= react_class_name %>Page = React.createClass
   getInitialState: ->
     <%= plural_table_name %>: @props.data.<%= plural_table_name %>
 
@@ -9,13 +9,13 @@
         data =
           header: '设置'
           desc: '还没有创建任何数据'
-          init_action: <<%= controller_class_name %>Page.CreateBtn data={@props.data} page={@} />
+          init_action: <<%= react_class_name %>Page.CreateBtn data={@props.data} page={@} />
         <ManagerFuncNotReady data={data} />
 
       else
         <div>
-          <<%= controller_class_name %>Page.CreateBtn data={@props.data} page={@} />
-          <<%= controller_class_name %>Page.Table data={@state.<%= plural_table_name %>} page={@} />
+          <<%= react_class_name %>Page.CreateBtn data={@props.data} page={@} />
+          <<%= react_class_name %>Page.Table data={@state.<%= plural_table_name %>} page={@} />
         </div>
     }
     </div>
@@ -52,7 +52,7 @@
           title: '创建'
           page: @props.page
 
-        jQuery.open_modal <<%= controller_class_name %>Page.Form {...params} />
+        jQuery.open_modal <<%= react_class_name %>Page.Form {...params} />
 
     Form: React.createClass
       render: ->
@@ -68,7 +68,7 @@
           <h3 className='ui header'>{@props.title}</h3>
           <SimpleDataForm
             model='<%= singular_table_name %>'
-            <%= singular_table_name %>={@props.url}
+            post={@props.url}
             done={@done}  
           >
 <% attributes.reject{|attr| attr.reference?}.each do |attribute| -%>
@@ -145,12 +145,12 @@
       edit: (<%= singular_table_name %>)->
         =>
           params =
-            url: <%= singular_table_name %>.update_url
+            url: <%= singular_table_name %>.<%=  react_prefix %>update_url
             title: '修改'
             page: @props.page
             data: <%= singular_table_name %>
 
-          jQuery.open_modal <<%= controller_class_name %>Page.UpdateForm {...params} />
+          jQuery.open_modal <<%= react_class_name %>Page.UpdateForm {...params} />
 
       delete: (<%= singular_table_name %>)->
         =>
@@ -159,6 +159,6 @@
             yes: =>
               jQuery.ajax
                 type: 'DELETE'
-                url: <%= singular_table_name %>.delete_url
+                url: <%= singular_table_name %>.<%=  react_prefix %>delete_url
               .done =>
                 @props.page.delete_<%= singular_table_name %> <%= singular_table_name %>

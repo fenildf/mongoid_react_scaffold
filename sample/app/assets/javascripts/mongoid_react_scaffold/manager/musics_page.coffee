@@ -1,42 +1,42 @@
-@PostsPage = React.createClass
+@ManagerMusicsPage = React.createClass
   getInitialState: ->
-    posts: @props.data.posts
+    manager_musics: @props.data.manager_musics
 
   render: ->
-    <div className='posts-page'>
+    <div className='manager_musics-page'>
     {
-      if @state.posts.length is 0
+      if @state.manager_musics.length is 0
         data =
           header: '设置'
           desc: '还没有创建任何数据'
-          init_action: <PostsPage.CreateBtn data={@props.data} page={@} />
+          init_action: <ManagerMusicsPage.CreateBtn data={@props.data} page={@} />
         <ManagerFuncNotReady data={data} />
 
       else
         <div>
-          <PostsPage.CreateBtn data={@props.data} page={@} />
-          <PostsPage.Table data={@state.posts} page={@} />
+          <ManagerMusicsPage.CreateBtn data={@props.data} page={@} />
+          <ManagerMusicsPage.Table data={@state.manager_musics} page={@} />
         </div>
     }
     </div>
 
-  add_post: (post)->
-    posts = Immutable.fromJS @state.posts
-    posts = posts.push post
-    @setState posts: posts.toJS()
+  add_manager_music: (manager_music)->
+    manager_musics = Immutable.fromJS @state.manager_musics
+    manager_musics = manager_musics.push manager_music
+    @setState manager_musics: manager_musics.toJS()
 
-  update_post: (post)->
-    posts = Immutable.fromJS @state.posts
-    posts = posts.map (x)->
-      x = x.merge post if x.get('id') is post.id
+  update_manager_music: (manager_music)->
+    manager_musics = Immutable.fromJS @state.manager_musics
+    manager_musics = manager_musics.map (x)->
+      x = x.merge manager_music if x.get('id') is manager_music.id
       x
-    @setState posts: posts.toJS()
+    @setState manager_musics: manager_musics.toJS()
 
-  delete_post: (post)->
-    posts = Immutable.fromJS @state.posts
-    posts = posts.filter (x)->
-      x.get('id') != post.id
-    @setState posts: posts.toJS()
+  delete_manager_music: (manager_music)->
+    manager_musics = Immutable.fromJS @state.manager_musics
+    manager_musics = manager_musics.filter (x)->
+      x.get('id') != manager_music.id
+    @setState manager_musics: manager_musics.toJS()
 
   statics:
     CreateBtn: React.createClass
@@ -52,7 +52,7 @@
           title: '创建'
           page: @props.page
 
-        jQuery.open_modal <PostsPage.Form {...params} />
+        jQuery.open_modal <ManagerMusicsPage.Form {...params} />
 
     Form: React.createClass
       render: ->
@@ -67,7 +67,7 @@
         <div>
           <h3 className='ui header'>{@props.title}</h3>
           <SimpleDataForm
-            model='post'
+            model='manager_music'
             post={@props.url}
             done={@done}  
           >
@@ -79,7 +79,7 @@
         </div>
 
       done: (data)->
-        @props.page.add_post data.post
+        @props.page.add_manager_music data.manager_music
         @state.close()
 
     UpdateForm: React.createClass
@@ -95,7 +95,7 @@
         <div>
           <h3 className='ui header'>{@props.title}</h3>
           <SimpleDataForm
-            model='post'
+            model='manager_music'
             put={@props.url}
             done={@done}
             data={@props.data}  
@@ -108,7 +108,7 @@
         </div>
 
       done: (data)->
-        @props.page.update_post data.post
+        @props.page.update_manager_music data.manager_music
         @state.close()
 
     Table: React.createClass
@@ -146,23 +146,23 @@
           <ManagerTable data={table_data} title='' />
         </div>
 
-      edit: (post)->
+      edit: (manager_music)->
         =>
           params =
-            url: post.update_url
+            url: manager_music.manager_update_url
             title: '修改'
             page: @props.page
-            data: post
+            data: manager_music
 
-          jQuery.open_modal <PostsPage.UpdateForm {...params} />
+          jQuery.open_modal <ManagerMusicsPage.UpdateForm {...params} />
 
-      delete: (post)->
+      delete: (manager_music)->
         =>
           jQuery.modal_confirm
             text: '确定要删除吗？'
             yes: =>
               jQuery.ajax
                 type: 'DELETE'
-                url: post.delete_url
+                url: manager_music.manager_delete_url
               .done =>
-                @props.page.delete_post post
+                @props.page.delete_manager_music manager_music

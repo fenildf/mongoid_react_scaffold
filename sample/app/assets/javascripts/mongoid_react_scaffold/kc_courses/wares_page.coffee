@@ -1,42 +1,42 @@
-@PostsPage = React.createClass
+@KcCoursesWaresPage = React.createClass
   getInitialState: ->
-    posts: @props.data.posts
+    kc_courses_wares: @props.data.kc_courses_wares
 
   render: ->
-    <div className='posts-page'>
+    <div className='kc_courses_wares-page'>
     {
-      if @state.posts.length is 0
+      if @state.kc_courses_wares.length is 0
         data =
           header: '设置'
           desc: '还没有创建任何数据'
-          init_action: <PostsPage.CreateBtn data={@props.data} page={@} />
+          init_action: <KcCoursesWaresPage.CreateBtn data={@props.data} page={@} />
         <ManagerFuncNotReady data={data} />
 
       else
         <div>
-          <PostsPage.CreateBtn data={@props.data} page={@} />
-          <PostsPage.Table data={@state.posts} page={@} />
+          <KcCoursesWaresPage.CreateBtn data={@props.data} page={@} />
+          <KcCoursesWaresPage.Table data={@state.kc_courses_wares} page={@} />
         </div>
     }
     </div>
 
-  add_post: (post)->
-    posts = Immutable.fromJS @state.posts
-    posts = posts.push post
-    @setState posts: posts.toJS()
+  add_kc_courses_ware: (kc_courses_ware)->
+    kc_courses_wares = Immutable.fromJS @state.kc_courses_wares
+    kc_courses_wares = kc_courses_wares.push kc_courses_ware
+    @setState kc_courses_wares: kc_courses_wares.toJS()
 
-  update_post: (post)->
-    posts = Immutable.fromJS @state.posts
-    posts = posts.map (x)->
-      x = x.merge post if x.get('id') is post.id
+  update_kc_courses_ware: (kc_courses_ware)->
+    kc_courses_wares = Immutable.fromJS @state.kc_courses_wares
+    kc_courses_wares = kc_courses_wares.map (x)->
+      x = x.merge kc_courses_ware if x.get('id') is kc_courses_ware.id
       x
-    @setState posts: posts.toJS()
+    @setState kc_courses_wares: kc_courses_wares.toJS()
 
-  delete_post: (post)->
-    posts = Immutable.fromJS @state.posts
-    posts = posts.filter (x)->
-      x.get('id') != post.id
-    @setState posts: posts.toJS()
+  delete_kc_courses_ware: (kc_courses_ware)->
+    kc_courses_wares = Immutable.fromJS @state.kc_courses_wares
+    kc_courses_wares = kc_courses_wares.filter (x)->
+      x.get('id') != kc_courses_ware.id
+    @setState kc_courses_wares: kc_courses_wares.toJS()
 
   statics:
     CreateBtn: React.createClass
@@ -52,7 +52,7 @@
           title: '创建'
           page: @props.page
 
-        jQuery.open_modal <PostsPage.Form {...params} />
+        jQuery.open_modal <KcCoursesWaresPage.Form {...params} />
 
     Form: React.createClass
       render: ->
@@ -67,7 +67,7 @@
         <div>
           <h3 className='ui header'>{@props.title}</h3>
           <SimpleDataForm
-            model='post'
+            model='kc_courses_ware'
             post={@props.url}
             done={@done}  
           >
@@ -79,7 +79,7 @@
         </div>
 
       done: (data)->
-        @props.page.add_post data.post
+        @props.page.add_kc_courses_ware data.kc_courses_ware
         @state.close()
 
     UpdateForm: React.createClass
@@ -95,7 +95,7 @@
         <div>
           <h3 className='ui header'>{@props.title}</h3>
           <SimpleDataForm
-            model='post'
+            model='kc_courses_ware'
             put={@props.url}
             done={@done}
             data={@props.data}  
@@ -108,7 +108,7 @@
         </div>
 
       done: (data)->
-        @props.page.update_post data.post
+        @props.page.update_kc_courses_ware data.kc_courses_ware
         @state.close()
 
     Table: React.createClass
@@ -146,23 +146,23 @@
           <ManagerTable data={table_data} title='' />
         </div>
 
-      edit: (post)->
+      edit: (kc_courses_ware)->
         =>
           params =
-            url: post.update_url
+            url: kc_courses_ware.kc_courses_update_url
             title: '修改'
             page: @props.page
-            data: post
+            data: kc_courses_ware
 
-          jQuery.open_modal <PostsPage.UpdateForm {...params} />
+          jQuery.open_modal <KcCoursesWaresPage.UpdateForm {...params} />
 
-      delete: (post)->
+      delete: (kc_courses_ware)->
         =>
           jQuery.modal_confirm
             text: '确定要删除吗？'
             yes: =>
               jQuery.ajax
                 type: 'DELETE'
-                url: post.delete_url
+                url: kc_courses_ware.kc_courses_delete_url
               .done =>
-                @props.page.delete_post post
+                @props.page.delete_kc_courses_ware kc_courses_ware

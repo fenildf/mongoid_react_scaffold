@@ -1,42 +1,42 @@
-@PostsPage = React.createClass
+@CoursesPage = React.createClass
   getInitialState: ->
-    posts: @props.data.posts
+    courses: @props.data.courses
 
   render: ->
-    <div className='posts-page'>
+    <div className='courses-page'>
     {
-      if @state.posts.length is 0
+      if @state.courses.length is 0
         data =
           header: '设置'
           desc: '还没有创建任何数据'
-          init_action: <PostsPage.CreateBtn data={@props.data} page={@} />
+          init_action: <CoursesPage.CreateBtn data={@props.data} page={@} />
         <ManagerFuncNotReady data={data} />
 
       else
         <div>
-          <PostsPage.CreateBtn data={@props.data} page={@} />
-          <PostsPage.Table data={@state.posts} page={@} />
+          <CoursesPage.CreateBtn data={@props.data} page={@} />
+          <CoursesPage.Table data={@state.courses} page={@} />
         </div>
     }
     </div>
 
-  add_post: (post)->
-    posts = Immutable.fromJS @state.posts
-    posts = posts.push post
-    @setState posts: posts.toJS()
+  add_course: (course)->
+    courses = Immutable.fromJS @state.courses
+    courses = courses.push course
+    @setState courses: courses.toJS()
 
-  update_post: (post)->
-    posts = Immutable.fromJS @state.posts
-    posts = posts.map (x)->
-      x = x.merge post if x.get('id') is post.id
+  update_course: (course)->
+    courses = Immutable.fromJS @state.courses
+    courses = courses.map (x)->
+      x = x.merge course if x.get('id') is course.id
       x
-    @setState posts: posts.toJS()
+    @setState courses: courses.toJS()
 
-  delete_post: (post)->
-    posts = Immutable.fromJS @state.posts
-    posts = posts.filter (x)->
-      x.get('id') != post.id
-    @setState posts: posts.toJS()
+  delete_course: (course)->
+    courses = Immutable.fromJS @state.courses
+    courses = courses.filter (x)->
+      x.get('id') != course.id
+    @setState courses: courses.toJS()
 
   statics:
     CreateBtn: React.createClass
@@ -52,7 +52,7 @@
           title: '创建'
           page: @props.page
 
-        jQuery.open_modal <PostsPage.Form {...params} />
+        jQuery.open_modal <CoursesPage.Form {...params} />
 
     Form: React.createClass
       render: ->
@@ -67,7 +67,7 @@
         <div>
           <h3 className='ui header'>{@props.title}</h3>
           <SimpleDataForm
-            model='post'
+            model='course'
             post={@props.url}
             done={@done}  
           >
@@ -79,7 +79,7 @@
         </div>
 
       done: (data)->
-        @props.page.add_post data.post
+        @props.page.add_course data.course
         @state.close()
 
     UpdateForm: React.createClass
@@ -95,7 +95,7 @@
         <div>
           <h3 className='ui header'>{@props.title}</h3>
           <SimpleDataForm
-            model='post'
+            model='course'
             put={@props.url}
             done={@done}
             data={@props.data}  
@@ -108,7 +108,7 @@
         </div>
 
       done: (data)->
-        @props.page.update_post data.post
+        @props.page.update_course data.course
         @state.close()
 
     Table: React.createClass
@@ -146,23 +146,23 @@
           <ManagerTable data={table_data} title='' />
         </div>
 
-      edit: (post)->
+      edit: (course)->
         =>
           params =
-            url: post.update_url
+            url: course.update_url
             title: '修改'
             page: @props.page
-            data: post
+            data: course
 
-          jQuery.open_modal <PostsPage.UpdateForm {...params} />
+          jQuery.open_modal <CoursesPage.UpdateForm {...params} />
 
-      delete: (post)->
+      delete: (course)->
         =>
           jQuery.modal_confirm
             text: '确定要删除吗？'
             yes: =>
               jQuery.ajax
                 type: 'DELETE'
-                url: post.delete_url
+                url: course.delete_url
               .done =>
-                @props.page.delete_post post
+                @props.page.delete_course course

@@ -13,8 +13,8 @@ module MongoidReactScaffold
       check_class_collision suffix: "Controller"
 
       #class_option :helper, type: :boolean
-      #class_option :orm, banner: "NAME", type: :string, required: true,
-                         #desc: "ORM to generate the controller for"
+      class_option :orm, banner: "NAME", type: :string, required: true,
+                         desc: "ORM to generate the controller for"
 
       argument :attributes, type: :array, default: [], banner: "field:type field:type"
 
@@ -24,7 +24,18 @@ module MongoidReactScaffold
 
       def add_route
         sentinel = /\.routes\.draw do\s*\n/m
-        inject_into_file 'config/routes.rb', "  resources :#{file_name.pluralize}\n", { after: sentinel, verbose: false, force: true }
+        if has_module?
+          inject_into_file 'config/routes.rb', { after: sentinel, verbose: false, force: true } do
+"""
+  scope path: '/#{last_path}', module: '#{last_path}', as: :#{last_path} do
+    resources :#{file_name.pluralize}
+  end
+
+"""
+          end
+        else
+          inject_into_file 'config/routes.rb', "  resources :#{file_name.pluralize}\n", { after: sentinel, verbose: false, force: true }
+        end
       end
 
       #hook_for :template_engine, :test_framework, as: :scaffold
@@ -33,6 +44,18 @@ module MongoidReactScaffold
       #hook_for :helper, as: :scaffold do |invoked|
         #invoke invoked, [ controller_name ]
       #end
+      protected
+      def react_prefix
+        "#{controller_class_path.join('_')}_" if has_module?
+      end
+
+      def has_module?
+        !controller_class_path.blank?
+      end
+
+      def last_path
+        controller_class_path.last
+      end
     end
   end
 end
