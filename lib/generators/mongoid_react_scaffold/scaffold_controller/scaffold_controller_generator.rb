@@ -13,8 +13,8 @@ module MongoidReactScaffold
       check_class_collision suffix: "Controller"
 
       #class_option :helper, type: :boolean
-      #class_option :orm, banner: "NAME", type: :string, required: true,
-                         #desc: "ORM to generate the controller for"
+      class_option :orm, banner: "NAME", type: :string, required: true,
+                         desc: "ORM to generate the controller for"
 
       argument :attributes, type: :array, default: [], banner: "field:type field:type"
 

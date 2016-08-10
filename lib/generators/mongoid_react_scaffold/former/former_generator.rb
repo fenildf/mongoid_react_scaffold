@@ -20,10 +20,22 @@ module MongoidReactScaffold
 
       def add_to_data_former
         sentinel = /DataFormerConfig\s*\n/m
-        inject_into_file 'app/models/data_former.rb', "  include #{class_name}Former\n", { after: sentinel, verbose: false, force: true } 
+        inject_into_file 'app/models/data_former.rb', "  include #{former_class_name}\n", { after: sentinel, verbose: false, force: true } 
       end
 
       #hook_for :test_framework
+      protected
+      def former_class_name
+        (class_path + [file_name, 'former']).map!{ |m| m.camelize }.join
+      end
+
+      def module_route_name
+        class_path.join("_") + "_" unless class_path.blank?
+      end
+
+      def last_file_name_to_route
+        file_name.split("_").last
+      end
     end
   end
 end
