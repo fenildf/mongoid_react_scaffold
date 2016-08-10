@@ -28,7 +28,7 @@ class PostsController < ApplicationController
   end
 
   def update
-    post = Post.find params[:id]
+    post = Post.find(params[:id])
 
     update_model(post, post_params, "post") do |_post|
       DataFormer.new(_post)
@@ -39,13 +39,13 @@ class PostsController < ApplicationController
   end
 
   def destroy
-    post = Post.find params[:id]
+    post = Post.find(params[:id])
     post.destroy
     render :status => 200, :json => {:status => 'success'}
   end
 
   private
     def post_params
-      params.require(:post).permit(:name, :user_id)
+      params.require(:post).permit(:name, :views)
     end
 end

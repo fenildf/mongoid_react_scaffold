@@ -1,8 +1,8 @@
-module PostFormer
+module KcCoursesWareFormer
   extend ActiveSupport::Concern
 
   included do
-    former "Post" do
+    former "KcCourses::Ware" do
       field :id, ->(instance) {instance.id.to_s}
       field :name
       field :views
@@ -12,11 +12,19 @@ module PostFormer
       #}
 
       url :update_url, ->(instance) {
-        post_path(instance)
+        ware_path(instance)
       }
 
       url :delete_url, ->(instance) {
-        post_path(instance)
+        ware_path(instance)
+      }
+
+      url :kc_courses_update_url, ->(instance) {
+        kc_courses_ware_path(instance)
+      }
+
+      url :kc_courses_delete_url, ->(instance) {
+        kc_courses_ware_path(instance)
       }
     end
   end

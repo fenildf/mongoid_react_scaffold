@@ -1,6 +1,9 @@
 class DataFormer
   include DataFormerConfig
 
+  include KcCoursesCourseFormer
+  include MusicFormer
+  include KcCoursesWareFormer
   include PostFormer
   def self.paginate_data(models)
     begin
