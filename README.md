@@ -36,7 +36,7 @@ And then execute:
 
 ## 使用说明
 
-初次运行：
+### 初次运行
 ```shell
 rails g mongoid_react_scaffold:install
 ```
@@ -59,6 +59,250 @@ rails g mongoid_react_scaffold:install
 # 添加以下依赖
   include MongoidReactScaffoldHelper
 ```
+
+### 模型生成(支持多层)
+```
+rails g mongoid_react_scaffold:model post name views:integer
+```
+
+和 **rails g model** 相同
+
+
+### Former生成(支持module)
+```
+rails g mongoid_react_scaffold:former post name views:integer
+```
+
+自动在 **app/models/concerns/** 生成对应的模型Former
+
+然后添加到 **app/models/data_former.rb** 中
+
+并include
+
+### 控制器生成(支持module)
+```
+rails g mongoid_react_scaffold:scaffold_controller post name views:integer
+```
+
+自动生成对应的控制器(仅index,create,update,destroy)
+
+并添加对应路由到 **config/routes.rb**
+
+ps：
+多次执行会重复插入，且如有命名空间，需要自行整理，否则比较凌乱。
+
+
+### React生成(支持module)
+```
+rails g mongoid_react_scaffold:react post name views:integer
+```
+
+生成对应的React Page
+
+
+## 实例
+### 简单文章示例
+在加载了此gem的项目，执行以下命令
+```shell
+rails g mongoid_react_scaffold:model post name views:integer
+rails g mongoid_react_scaffold:former post name views:integer
+rails g mongoid_react_scaffold:scaffold_controller post name views:integer
+rails g mongoid_react_scaffold:react post name views:integer
+
+rails s
+```
+
+[点我访问](http://localhost:3000/posts)
+
+### 课程KcCourses::Course(带module的MVC)
+```shell
+rails g mongoid_react_scaffold:model kc_courses/ware name views:integer
+rails g mongoid_react_scaffold:former kc_courses/ware name views:integer
+rails g mongoid_react_scaffold:scaffold_controller kc_courses/ware name views:integer
+rails g mongoid_react_scaffold:react kc_courses/ware name views:integer
+
+rails s
+```
+
+[点我访问](http://localhost:3000/kc_courses/wares)
+
+
+### 管理员管理音乐(带module的CV, 不带module的M)
+```shell
+rails g mongoid_react_scaffold:model music name views:integer
+rails g mongoid_react_scaffold:former music name views:integer
+rails g mongoid_react_scaffold:scaffold_controller manager/music name views:integer
+rails g mongoid_react_scaffold:react manager/music name views:integer
+
+rails s
+```
+
+编辑 **app/models/concerns/music_former.rb**
+
+添加 **manager_xxx_url**
+```ruby
+module MusicFormer
+  extend ActiveSupport::Concern
+
+  included do
+    former "Music" do
+      field :id, ->(instance) {instance.id.to_s}
+      field :name
+      field :views
+
+      #logic :method, ->(instance) {
+      #  instance.method
+      #}
+
+      url :update_url, ->(instance) {
+        music_path(instance)
+      }
+
+      url :delete_url, ->(instance) {
+        music_path(instance)
+      }
+
+      ### 添加以下内容(module)
+      url :manager_update_url, ->(instance) {
+        manager_music_path(instance)
+      }
+
+      url :manager_delete_url, ->(instance) {
+        manager_music_path(instance)
+      }
+    end
+  end
+end
+```
+
+编辑 **app/controllers/musics_controller.rb**
+
+将 **Manager::Music** 替换为 **Music**
+```ruby
+class Manager::MusicsController < ApplicationController
+  def index
+    @page_name = "manager_musics"
+    manager_musics = Music.all.map do |manager_music|
+      DataFormer.new(manager_music)
+        .url(:manager_update_url)
+        .url(:manager_delete_url)
+        .data
+    end
+
+    @component_data = {
+      manager_musics: manager_musics,
+      create_url: manager_musics_path
+    }
+
+    render "/react/page"
+  end
+
+  def create
+    manager_music = Music.new manager_music_params
+
+    save_model(manager_music, "manager_music") do |_manager_music|
+      DataFormer.new(_manager_music)
+        .url(:manager_update_url)
+        .url(:manager_delete_url)
+        .data
+    end
+  end
+
+  def update
+    manager_music = Music.find(params[:id])
+
+    update_model(manager_music, manager_music_params, "manager_music") do |_manager_music|
+      DataFormer.new(_manager_music)
+        .url(:manager_update_url)
+        .url(:manager_delete_url)
+        .data
+    end
+  end
+
+  def destroy
+    manager_music = Music.find(params[:id])
+    manager_music.destroy
+    render :status => 200, :json => {:status => 'success'}
+  end
+
+  private
+    def manager_music_params
+      params.require(:manager_music).permit(:name, :views)
+    end
+end
+```
+
+[点我访问](http://localhost:3000/manager/musics)
+
+
+### 课程KcCourses::Course(带module的M,单层的CV)
+```shell
+rails g mongoid_react_scaffold:model kc_courses/course name views:integer
+rails g mongoid_react_scaffold:former kc_courses/course name views:integer
+rails g mongoid_react_scaffold:scaffold_controller course name views:integer
+rails g mongoid_react_scaffold:react course name views:integer
+
+rails s
+```
+
+编辑 **app/controllers/courses_controller.rb**
+
+将 **Course** Model替换为 **KcCourses::Course** (控制器名不变)
+```ruby
+class CoursesController < ApplicationController
+  def index
+    @page_name = "courses"
+    courses = KcCourses::Course.all.map do |course|
+      DataFormer.new(course)
+        .url(:update_url)
+        .url(:delete_url)
+        .data
+    end
+
+    @component_data = {
+      courses: courses,
+      create_url: courses_path
+    }
+
+    render "/react/page"
+  end
+
+  def create
+    course = KcCourses::Course.new course_params
+
+    save_model(course, "course") do |_course|
+      DataFormer.new(_course)
+        .url(:update_url)
+        .url(:delete_url)
+        .data
+    end
+  end
+
+  def update
+    course = KcCourses::Course.find(params[:id])
+
+    update_model(course, course_params, "course") do |_course|
+      DataFormer.new(_course)
+        .url(:update_url)
+        .url(:delete_url)
+        .data
+    end
+  end
+
+  def destroy
+    course = KcCourses::Course.find(params[:id])
+    course.destroy
+    render :status => 200, :json => {:status => 'success'}
+  end
+
+  private
+    def course_params
+      params.require(:course).permit(:name, :views)
+    end
+end
+```
+
+[点我访问](http://localhost:3000/courses)
 
 ## Development
 
