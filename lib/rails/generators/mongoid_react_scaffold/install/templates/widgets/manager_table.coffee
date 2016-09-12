@@ -109,7 +109,7 @@
         </div>
 
       componentDidMount: ->
-        jQuery(React.findDOMNode @refs.filters).find('.ui.dropdown').dropdown()
+        jQuery(ReactDOM.findDOMNode @refs.filters).find('.ui.dropdown').dropdown()
 
       statics:
         IconDropDown: React.createClass
